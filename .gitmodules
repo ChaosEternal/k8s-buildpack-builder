@@ -1,0 +1,3 @@
+[submodule "undocker"]
+	path = undocker
+	url = https://github.com/larsks/undocker.git
