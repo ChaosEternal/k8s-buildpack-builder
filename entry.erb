@@ -1,0 +1,26 @@
+#!/bin/bash
+export HOME=/home/vcap/app
+export CF_STACK=cflinuxfs2
+export PORT=${PORT:-8080}
+cd $HOME
+
+if [ -d ../profile.d ]
+then
+   for i in ../profile.d/*;
+   do
+       [ -f $i ] && source $i
+   done
+fi
+if [ -d .profile.d ]
+then
+    for i in .profile.d/*;
+    do
+	[ -f $i ] && source $i
+    done
+fi
+
+[ -f .profile ] && source .profile
+
+cd $HOME <% require "yaml" 
+t = YAML.load_file(ENV["APP_DROPLET_DIR"]+"/staging_info.yml") %>
+exec bash -c "<%= t["start_command"] %>"
