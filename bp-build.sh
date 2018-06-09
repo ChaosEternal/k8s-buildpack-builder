@@ -48,12 +48,13 @@ build_on_cache () {
     # $1 detected_bp
     # $2 APP_TMPDIR
     # $3 cache_dir
+    set -e
     bp_name=`basename $1`
     t_cache_dir=$3/$bp_name
     mkdir -p $t_cache_dir
     CF_STACK=cflinuxfs2 builder -buildArtifactsCacheDir $t_cache_dir -buildpacksDir /var/lib/buildpacks -buildpackOrder python-buildpack,staticfile -buildDir $APP_TMPDIR
     t_droplet_dir=`mktemp -d`
-    tar xzf /tmp/droplet -C $t_droplet_dir
+    tar xzf /tmp/droplet -C $t_droplet_dir || exit 0
     APP_DROPLET_DIR=$t_droplet_dir CF_STACK=cflinuxfs2 erb /usr/local/share/bp-build/entry.erb > /tmp/entry.sh
     chmod +x /tmp/entry.sh
     #push_image $APP_TMPDIR
