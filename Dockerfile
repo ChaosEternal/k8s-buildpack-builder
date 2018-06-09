@@ -8,4 +8,5 @@ COPY bp-build.sh /usr/local/bin/
 RUN chmod +x /usr/local/bin/undocker  /usr/local/bin/bp-build.sh
 COPY buildpacks /var/lib/buildpacks
 COPY entry.erb /usr/local/share/bp-build/entry.erb
-CMD ["bash","/home/vcap/entry.sh"]
+USER vcap:vcap
+CMD ["bash","/usr/local/bin/bp-build.sh"]
