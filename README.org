@@ -1,0 +1,16 @@
+* k8s buildpacker builder
+K8s buildpacker builder is a container image which can be run as a k8s job to convert a application to container image like cloudfoundry does.
+
+This document is not finished.
+
+* Usage
+  - prepare buildpacks required 
+  - use worker-umoci to prepare a base image
+  - use the top level Dockerfile to build a builder image
+  - see examples dir to build an application to container image
+
+* tools used
+  - umoci
+  - skopeo
+  - buildpacklifecycle
+  - undocker.py
