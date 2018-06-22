@@ -1,0 +1,37 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: pi-fs
+spec:
+  template:
+    spec:
+      dnsPolicy: Default
+      containers:
+      - name: bp-bldr
+        image: registry.internal/k8s-bp-builder
+        command: ["bash", "-x", "/usr/local/bin/bp-build.sh"]
+#        command: ["sleep", "10000"]
+        env:
+        - name: APP_IMG
+          value: app/python-app:latest
+        - name: APP_DEST
+          value: python-app-fs:latest
+        - name: BP_LIST
+          value: staticfile
+        - name: BP_NO_DETECT
+          value: "true"
+        volumeMounts:
+        # this volume must support lock
+        - name: nfs
+          mountPath: "/mnt"
+      restartPolicy: Never
+      imagePullSecrets:
+      - name: regcred
+      volumes:
+      - name: nfs
+        persistentVolumeClaim:
+          claimName: nfs
+      hostAliases:
+      - ip: "10.244.0.100"
+        hostnames: ["registry.internal"]
+      
