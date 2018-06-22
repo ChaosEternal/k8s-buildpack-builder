@@ -30,6 +30,14 @@ export APP_REG_URL="${REG_URL:-docker://registry.internal/}${APP_IMG}"
 
 bp_dir=${BP_DIR:-/var/lib/buildpacks}
 
+if [ -n "$BP_NO_DETECT" ] && [ -z "$BP_LIST" ]
+then
+    cat <<EOF
+Must set BP_LIST WHEN set BP_NO_DETECT
+EOF
+    exit 1
+fi
+
 bp_list_installed=`cat "$bp_dir"/buildpacks.lst |sort -r -n -t : -k2,1|cut -d : -f 1|tr '\n' ','|sed 's/,$//'`
 bp_list=${BP_LIST:-$bp_list_installed}
 
@@ -55,7 +63,7 @@ build_on_cache () {
     bp_name=`basename $1`
     t_cache_dir=$3/$bp_name
     mkdir -p $t_cache_dir
-    CF_STACK=cflinuxfs2 builder -buildArtifactsCacheDir $t_cache_dir -buildpacksDir /var/lib/buildpacks -buildpackOrder "$bp_list" -buildDir $APP_TMPDIR
+    CF_STACK=cflinuxfs2 builder -buildArtifactsCacheDir $t_cache_dir -buildpacksDir /var/lib/buildpacks -buildpackOrder "$bp_list" -buildDir $APP_TMPDIR "${BP_NO_DETECT:+-skipDetect}"
     t_droplet_dir=`mktemp -d`
     tar xzf /tmp/droplet -C $t_droplet_dir || exit 0
     APP_DROPLET_DIR=$t_droplet_dir CF_STACK=cflinuxfs2 erb /usr/local/share/bp-build/entry.erb > /tmp/entry.sh
