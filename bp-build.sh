@@ -11,6 +11,7 @@
 # PREDEFINED_BP=
 # BP_DIR=/var/lib/buildpacks
 # BP_CACHE_DIR=/mnt/cache
+# NO_DROP_ROOT
 #detect buildpack
 
 if [ -z "$APP_DEST" ]
@@ -72,6 +73,9 @@ build_on_cache () {
     skopeo copy --src-tls-verify=false --src-creds jose:hola $CFSTACK_URL oci:/tmp/cfstack:latest
     umoci insert --image /tmp/cfstack:latest $t_droplet_dir /home/vcap/
     umoci insert --image /tmp/cfstack:latest /tmp/entry.sh /home/vcap/entry.sh
+    if [ -z "$NO_DROP_ROOT" ]; then
+	umoci config --config.user "vcap:vcap" --image /tmp/cfstack:latest
+    fi
     skopeo copy --dest-tls-verify=false --dest-creds jose:hola oci:/tmp/cfstack:latest $APP_DEST_URL 
 
 }
