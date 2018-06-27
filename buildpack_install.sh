@@ -38,7 +38,7 @@ then
     unzip "$bp" -d "$bpdirname"
 elif [ -d "$bp" ]
 then
-    cp -r "$bp" "$bpdirname"
+    (cd "$bp"; tar c . )|tar x -C "$bpdirname"
 fi
     
 
