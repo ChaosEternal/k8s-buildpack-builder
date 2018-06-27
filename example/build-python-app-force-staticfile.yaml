@@ -24,6 +24,8 @@ spec:
         # this volume must support lock
         - name: nfs
           mountPath: "/mnt"
+        - name: regsecs
+          mountPath: /etc/reg-authfile
       restartPolicy: Never
       imagePullSecrets:
       - name: regcred
@@ -31,6 +33,9 @@ spec:
       - name: nfs
         persistentVolumeClaim:
           claimName: nfs
+      - name: regsecs
+        secret:
+          secretName: regcred
       hostAliases:
       - ip: "10.244.0.100"
         hostnames: ["registry.internal"]
