@@ -1,3 +1,4 @@
 * TODO umoci in bp-build.sh add more information to image, like builder version etc.
-* TODO skopeo in bp-build.sh get credentials from cfg
+* DONE skopeo in bp-build.sh get credentials from cfg
+  0433c49 * suport using credential of registries from k8s' secret
 * TODO skopeo in bp-build.sh get certs from cfg
