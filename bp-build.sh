@@ -14,6 +14,22 @@
 # NO_DROP_ROOT
 #detect buildpack
 
+if [ -f /etc/reg-authfile/.dockerconfigjson ]
+then
+    echo No secret file defined for docker registry, exiting
+    cat <<EOF
+Add a volume mount for registry's credentials as 
+        volumeMounts:
+        - name: regsecs
+          mountPath: /etc/reg-authfile
+and also define a volume:
+      volumes:
+      - name: regsecs
+        secret:
+          secretName: regcred
+EOF
+fi
+
 if [ -z "$APP_DEST" ]
 then
     echo APP_DEST not specified, exiting
@@ -50,7 +66,7 @@ fetch_app_objs () {
     # $1 APP_REG_URL
     # $2 APP_TMPDIR
     TMPFILE=`mktemp `
-    skopeo copy --additional-tag ${1/docker:\/\//} --src-tls-verify=false --src-creds jose:hola $1 docker-archive:$TMPFILE
+    skopeo copy --authfile /etc/reg-authfile/.dockerconfigjson --additional-tag ${1/docker:\/\//} --src-tls-verify=false $1 docker-archive:$TMPFILE
     #FIXME: creds
     cat $TMPFILE|undocker -o $2
     rm $TMPFILE
@@ -70,13 +86,13 @@ build_on_cache () {
     APP_DROPLET_DIR=$t_droplet_dir CF_STACK=cflinuxfs2 erb /usr/local/share/bp-build/entry.erb > /tmp/entry.sh
     chmod +x /tmp/entry.sh
     #push_image $APP_TMPDIR
-    skopeo copy --src-tls-verify=false --src-creds jose:hola $CFSTACK_URL oci:/tmp/cfstack:latest
+    skopeo copy --authfile /etc/reg-authfile/.dockerconfigjson --src-tls-verify=false $CFSTACK_URL oci:/tmp/cfstack:latest
     umoci insert --image /tmp/cfstack:latest $t_droplet_dir /home/vcap/
     umoci insert --image /tmp/cfstack:latest /tmp/entry.sh /home/vcap/entry.sh
     if [ -z "$NO_DROP_ROOT" ]; then
 	umoci config --config.user "vcap:vcap" --image /tmp/cfstack:latest
     fi
-    skopeo copy --dest-tls-verify=false --dest-creds jose:hola oci:/tmp/cfstack:latest $APP_DEST_URL 
+    skopeo copy --authfile /etc/reg-authfile/.dockerconfigjson --dest-tls-verify=false oci:/tmp/cfstack:latest $APP_DEST_URL 
 
 }
 
