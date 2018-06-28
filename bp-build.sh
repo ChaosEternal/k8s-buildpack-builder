@@ -104,7 +104,8 @@ if [ -z "${detected_bp}" ]
    then
        for bp in $bp_dir/*
        do
-	   if $bp/bin/detect $APP_TMPDIR; then
+	   
+	   if [ -x $bp/bin/detect ] && $bp/bin/detect $APP_TMPDIR; then
 	       detected_bp=$bp
 	       break
 	   fi
