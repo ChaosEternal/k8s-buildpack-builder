@@ -106,25 +106,7 @@ build_on_cache () {
 
 fetch_app_objs "$APP_REG_URL" $APP_TMPDIR
 
-detected_bp=${PREDEFINED_BP}
-
-if [ -z "${detected_bp}" ]
-   then
-       for bp in $bp_dir/*
-       do
-	   
-	   if [ -x $bp/bin/detect ] && $bp/bin/detect $APP_TMPDIR; then
-	       detected_bp=$bp
-	       break
-	   fi
-       done
-fi
-if [ ! -d "$detected_bp" ]
-then
-    echo buildpack $detected_bp does not exist
-    exit 0
-fi
-
+detected_bp="0"
 ## lock_on_bp_cache_dir
 while true
 do
