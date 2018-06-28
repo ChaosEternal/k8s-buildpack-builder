@@ -18,6 +18,27 @@ spec:
           value: python-app-root:latest
         - name: NO_DROP_ROOT
           value: "yes"
+        - name: REG_CA_CERT
+          value: |
+            -----BEGIN CERTIFICATE-----
+            MIIDJDCCAgygAwIBAgIUB6Xs73NVF8YwaLAKiRWHhkieWTkwDQYJKoZIhvcNAQEL
+            BQAwDTELMAkGA1UEAxMCY2EwHhcNMTgwMzA4MDUyNzU2WhcNMTkwMzA4MDUyNzU2
+            WjANMQswCQYDVQQDEwJjYTCCASIwDQYJKoZIhvcNAQEBBQADggEPADCCAQoCggEB
+            AOYq6Ecb65ALQlomppVU8S8+xg80ojjuYFIQhBXBnpQWSr/hp/Cbc0MDP8Swu8M8
+            I8nLqJLu3+hx0difcBHS4ELYxkJ6NmbuBaO8qdT2hAH1upPvnQYKTC6YXGo4TpY5
+            NYkn1P0E2/TIsl6IsvCif9joATMKJh5E+vQsb/o2TmymEXrQr1jeS7bSRAulydkl
+            FKkht/UGWCSIvFbU3WWsDKexY9wXN7PgnLh82bf6eGZ9UIqp246dPIfHqNqXD79Y
+            FDQPanGTDZk7KhdjHmkrA8ZHTIU6cghEqu/AMrlLRE7C/wniFaDnATHItxB8Kinc
+            HyiFBY7HUDLAKgRqIgoEt+0CAwEAAaN8MHowHQYDVR0OBBYEFAB1V86Hp2p7zDfE
+            11VpL/M4B4XDMEgGA1UdIwRBMD+AFAB1V86Hp2p7zDfE11VpL/M4B4XDoRGkDzAN
+            MQswCQYDVQQDEwJjYYIUB6Xs73NVF8YwaLAKiRWHhkieWTkwDwYDVR0TAQH/BAUw
+            AwEB/zANBgkqhkiG9w0BAQsFAAOCAQEAzDueT0NUitAUkz7aPk7KPqKe5fj/Bzxa
+            HsWSGuMExdnUx2AH6SOUiDutd/iY1QCkgoHhxJMvW6l2YqcMfDYJyrn4TQbIojy2
+            CeAd2R1kTgiiyNclpkpfinDnqwW1iv/h3JzEe2QzBD3RubUDyr5jh6tO6yVCsBkg
+            +EDS3rbXPvR7gQdlMIuXyjLKh1d2VAenhwCaLtgKHIxWTeYlvLUDQTWroiNiqqpr
+            JVc/ZaUHaQAsoMpYah5AJir9nagKx3pFYa0jEifd1mjtOEsxKBsYsXpFd5TOkdSd
+            ySeQOKRoxEdvvN6cvQNDl2L8Ldz3TBDJwjpQ3JDlLZlTwBRBloRRmg==
+            -----END CERTIFICATE-----
         volumeMounts:
         # this volume must support lock
         - name: nfs

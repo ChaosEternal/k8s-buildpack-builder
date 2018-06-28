@@ -39,6 +39,14 @@ then
     echo APP_IMG not specified, exiting
 fi
 
+if [ -n "$REG_CA_CERT" ]
+then
+    mkdir -p /tmp/certs/
+    echo "$REG_CA_CERT" > /tmp/certs/ca.crt
+    export SKOPEO_SRC_CERT="--src-cert-dir /tmp/certs"
+    export SKOPEO_DST_CERT="--dest-cert-dir /tmp/certs"
+fi
+
 export CF_STACK=${CF_STACK:-cflinuxfs2}
 export CFSTACK_URL="${REG_URL:-docker://registry.internal/}${CFSTACK_LIB}${CF_STACK}:${CFSTACK_TAG:-latest}"
 export APP_DEST_URL="${REG_URL:-docker://registry.internal/}${APP_DEST}"
@@ -66,7 +74,7 @@ fetch_app_objs () {
     # $1 APP_REG_URL
     # $2 APP_TMPDIR
     TMPFILE=`mktemp `
-    skopeo copy --authfile /etc/reg-authfile/.dockerconfigjson --additional-tag ${1/docker:\/\//} --src-tls-verify=false $1 docker-archive:$TMPFILE
+    skopeo copy --authfile /etc/reg-authfile/.dockerconfigjson --additional-tag ${1/docker:\/\//} $SKOPEO_SRC_CERT $1 docker-archive:$TMPFILE
     #FIXME: creds
     cat $TMPFILE|undocker -o $2
     rm $TMPFILE
@@ -86,13 +94,13 @@ build_on_cache () {
     APP_DROPLET_DIR=$t_droplet_dir CF_STACK=cflinuxfs2 erb /usr/local/share/bp-build/entry.erb > /tmp/entry.sh
     chmod +x /tmp/entry.sh
     #push_image $APP_TMPDIR
-    skopeo copy --authfile /etc/reg-authfile/.dockerconfigjson --src-tls-verify=false $CFSTACK_URL oci:/tmp/cfstack:latest
+    skopeo copy --authfile /etc/reg-authfile/.dockerconfigjson $SKOPEO_SRC_CERT $CFSTACK_URL oci:/tmp/cfstack:latest
     umoci insert --image /tmp/cfstack:latest $t_droplet_dir /home/vcap/
     umoci insert --image /tmp/cfstack:latest /tmp/entry.sh /home/vcap/entry.sh
     if [ -z "$NO_DROP_ROOT" ]; then
 	umoci config --config.user "vcap:vcap" --image /tmp/cfstack:latest
     fi
-    skopeo copy --authfile /etc/reg-authfile/.dockerconfigjson --dest-tls-verify=false oci:/tmp/cfstack:latest $APP_DEST_URL 
+    skopeo copy --authfile /etc/reg-authfile/.dockerconfigjson $SKOPEO_DST_CERT oci:/tmp/cfstack:latest $APP_DEST_URL 
 
 }
 
