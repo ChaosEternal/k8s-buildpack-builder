@@ -4,10 +4,24 @@ K8s buildpacker builder is a container image which can be run as a k8s job to co
 This document is not finished.
 
 * Usage
-  - prepare buildpacks required 
-  - use worker-umoci to prepare a base image
-  - use the top level Dockerfile to build a builder image
-  - see examples dir to build an application to container image
+** prepare buildpacks required 
+   User ~buildpack_install.sh~ to install a buildpack to ~buildpacks/~ . The dir ~buildpacks/~ will be installed at ~/var/lib/buildpacks~ when build the "builder" image.
+   
+   ~buildpack_install.sh name priority zip|dir targetdir~
+** use worker-umoci to prepare a base image
+   Enter worker-umoci, run docker build
+   
+   This stage requires cflinuxfs3 and cflinuxfs2 both.
+** use the top level Dockerfile to build a builder image
+   This stage requires cflinuxfs2.
+
+** see examples dir to build an application to container image
+   - Upload the app dir to registry. record the path as APP_IMG
+   - Adjust the APP_DEST, the build result is uploaded there.
+   - Adjust registry related things, the credentials, the cacerts, the REG_URL
+   - Prepare a NFS volume for cache using, the NFS volume must has ability to propagate locks.
+     The cache dir must has a dir '0' and may has '1', '2' ... This controls how many builder job can run concurrently.
+   - Prepare a k8s job file from the examples and run the job.
 
 * tools used
   - umoci
