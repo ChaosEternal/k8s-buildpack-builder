@@ -14,7 +14,7 @@
 # NO_DROP_ROOT
 #detect buildpack
 
-if [ -f /etc/reg-authfile/.dockerconfigjson ]
+if [ ! -f /etc/reg-authfile/.dockerconfigjson ]
 then
     echo No secret file defined for docker registry, exiting
     cat <<EOF
@@ -28,6 +28,7 @@ and also define a volume:
         secret:
           secretName: regcred
 EOF
+    exit 1
 fi
 
 if [ -z "$APP_DEST" ]
