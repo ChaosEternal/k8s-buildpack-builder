@@ -16,6 +16,9 @@ spec:
           value: app/python-app:latest
         - name: APP_DEST
           value: python-app:latest
+        - name: REG_URL
+          # this default
+          value: docker://registry.internal/
         - name: REG_CA_CERT
           value: |
             -----BEGIN CERTIFICATE-----
