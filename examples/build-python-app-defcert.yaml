@@ -1,0 +1,41 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: pi
+spec:
+  template:
+    spec:
+      dnsPolicy: Default
+      containers:
+      - name: bp-bldr
+        image: registry.internal/k8s-bp-builder
+        command: ["bash", "-x", "/usr/local/bin/bp-build.sh"]
+#        command: ["sleep", "10000"]
+        env:
+        - name: APP_IMG
+          value: app/python-app:latest
+        - name: APP_DEST
+          value: python-app:latest
+        - name: REG_URL
+          # this default
+          value: docker://registry.internal/
+        volumeMounts:
+        # this volume must support lock
+        - name: nfs
+          mountPath: "/mnt"
+        - name: regsecs
+          mountPath: /etc/reg-authfile
+      restartPolicy: Never
+      imagePullSecrets:
+      - name: regcred
+      volumes:
+      - name: nfs
+        persistentVolumeClaim:
+          claimName: nfs
+      - name: regsecs
+        secret:
+          secretName: regcred
+      hostAliases:
+      - ip: "10.244.0.100"
+        hostnames: ["registry.internal"]
+      
