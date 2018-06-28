@@ -44,9 +44,12 @@ if [ -n "$REG_CA_CERT" ]
 then
     mkdir -p /tmp/certs/
     echo "$REG_CA_CERT" > /tmp/certs/ca.crt
-    export SKOPEO_SRC_CERT="--src-cert-dir /tmp/certs"
-    export SKOPEO_DST_CERT="--dest-cert-dir /tmp/certs"
+    USE_CA_CERTS=/tmp/certs
+else
+    USE_CA_CERTS=/var/run/secrets/kubernetes.io/serviceaccount/
 fi
+export SKOPEO_SRC_CERT="--src-cert-dir $USE_CA_CERTS"
+export SKOPEO_DST_CERT="--dest-cert-dir $USE_CA_CERTS"
 
 export CF_STACK=${CF_STACK:-cflinuxfs2}
 export CFSTACK_URL="${REG_URL:-docker://registry.internal/}${CFSTACK_LIB}${CF_STACK}:${CFSTACK_TAG:-latest}"
