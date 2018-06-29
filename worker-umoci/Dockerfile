@@ -37,3 +37,6 @@ COPY --from=stage1 /root/go/src/github.com/projectatomic/skopeo/skopeo /usr/loca
 COPY --from=stage1 /root/go/src/github.com/openSUSE/umoci/umoci /usr/local/bin/umoci
 COPY --from=stage2 /go/bin/* /usr/local/bin/
 COPY policy.json /etc/containers/policy.json
+RUN apt-get -y install guile-2.0
+RUN cd /root; git clone https://github.com/ChaosEternal/guile-scsh.git
+RUN cd /root/guile-scsh; git checkout guile-209-fix; guile --no-auto-compile install.scm
